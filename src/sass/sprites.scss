@@ -1,0 +1,33 @@
+.card{
+    background-image:url("/cards.png");
+    background-repeat:no-repeat;
+	color:transparent !important;
+	text-indent:-999em;
+	padding:0;
+	display:inline-block;
+	overflow:hidden;
+    align-self: center;
+    justify-self: center;
+}
+
+@mixin sprite($offset) {
+    $offset: $offset - 1;
+	width:100px;
+	height:100px;
+    background-position: 0 100px*-$offset;
+}
+
+
+$fruits : "red-apple", "banana", "orange", "lime", "pomegranate",
+ "apricot", "lemon", "strawberry", "green-apple", "peach", "grape",
+  "watermelon", "plum", "pear","cherry", "raspberry", "mango", "cherry-yellow";
+
+@for $i from 1 through length($fruits) {
+    $fruit: nth($fruits, $i);
+
+    .card-#{$fruit} {
+        @include sprite($i);
+      }
+
+
+}
