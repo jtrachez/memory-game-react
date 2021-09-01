@@ -1,9 +1,10 @@
-import { createContext, useContext, useEffect, useReducer } from "react";
+import { createContext, useContext, useEffect, useReducer, useState } from "react";
+
 
 const GameContext = createContext();
 
 const initialState = {
-    displayWinModal: false,
+    displayModalWin: false,
     opened: [],
     founded: []
 }
@@ -13,21 +14,21 @@ const ADD_OPEN_CARD = 'ADD_OPEN_CARD'
 const CLEAR_OPEN_CARDS = 'CLEAR_OPEN_CARDS'
 const ADD_FOUND_FRUIT = 'ADD_FOUND_FRUIT'
 const CLEAR_FOUND_FRUIT = 'CLEAR_FOUND_FRUIT'
-const OPEN_WIN_MODAL = 'OPEN_WIN_MODAL'
-const CLOSE_WIN_MODAL = 'CLOSE_WIN_MODAL'
+const OPEN_MODAL_WIN = 'OPEN_MODAL_WIN'
+const CLOSE_MODAL_WIN = 'CLOSE_WINCLOSE_MODAL_WIN_MODAL'
 
 
 const gameReducer = (state, action) => {
     switch (action.type) {
-        case OPEN_WIN_MODAL:
+        case OPEN_MODAL_WIN:
             return {
                 ...state,
-                displayWinModal: true
+                displayModalWin: true
             }
-        case CLOSE_WIN_MODAL:
+        case CLOSE_MODAL_WIN:
             return {
                 ...state,
-                displayWinModal: false
+                displayModalWin: false
             }
         case ADD_OPEN_CARD:
 
@@ -55,9 +56,6 @@ const gameReducer = (state, action) => {
     }
 }
 
-
-
-
 const GameProvider = (props) => {
 
     const [state, dispatch] = useReducer(gameReducer, initialState)
@@ -70,9 +68,10 @@ const GameProvider = (props) => {
         return dispatch({ type: ADD_FOUND_FRUIT, payload })
     }
 
+    const closeModalWin = () => dispatch({ type: CLOSE_MODAL_WIN })
+
 
     const checkDoubleCardClicked = () => {
-        console.log('called')
         if (state.opened.length >= 2) {
 
             const clickedCardOne = state.opened[0].fruit
@@ -92,21 +91,28 @@ const GameProvider = (props) => {
         }
     }
 
+    const checkWinGame = () => {
+        if (state.founded.length == 3) {
+            console.log('win game complete')
+            setTimeout(() => dispatch({ type: OPEN_MODAL_WIN }), 500)
+        }
+    }
+
+
 
     useEffect(() => {
         checkDoubleCardClicked()
-        if (state.founded.length == 18) {
-            console.log('win game complete')
-            dispatch({ type: OPEN_WIN_MODAL })
-        }
     })
 
-
+    useEffect(() => {
+        checkWinGame()
+    }, [state.founded])
 
 
     const value = {
         ...state,
         addOpenCard,
+        closeModalWin
     }
 
 
