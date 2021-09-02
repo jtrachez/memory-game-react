@@ -10,7 +10,7 @@ export default async function handler(req, res) {
 
         const repository = new PlayerRepository(client)
 
-        let data = await repository.getLastFiveByOrderAsc()
+        let data = await repository.getLastByOrderAsc(10)
 
         res.status(200).json(data)
     }

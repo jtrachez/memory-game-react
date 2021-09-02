@@ -1,5 +1,7 @@
+import { toJson } from "../lib/utils"
+
 export class Repository {
-    table
+
     constructor(client, table) {
         this.client = client
         this.table = table
@@ -8,7 +10,7 @@ export class Repository {
     async query(sql, data = null) {
         try {
             const query = await this.client.query(sql, data)
-            this.client.end()
+            await this.client.end()
             return query
 
         } catch (error) {
@@ -18,7 +20,8 @@ export class Repository {
     }
 
     async get({ fields = null, limit = 10, sort = 'DESC', orderBy = 'score' }) {
-        return await this.query(`SELECT ${fields ? fields.join(',') : '*'} FROM ${this.table} ORDER BY ${orderBy} ${sort} LIMIT 0,${limit}`)
+        let sql = `SELECT ${fields ? fields.join(',') : '*'} FROM ${this.table} ORDER BY ${orderBy} ${sort} LIMIT 0,${limit}`
+        return toJson(await this.query(sql))
     }
 
 

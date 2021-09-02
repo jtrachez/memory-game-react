@@ -7,9 +7,8 @@ export class PlayerRepository extends Repository {
         super(client, 'players')
     }
 
-    async getLastFiveByOrderAsc() {
-        return await this.get({ fields: ['name', 'score'], limit: 5, orderBy: 'score', sort: 'ASC' })
+    async getLastByOrderAsc({ limit = 5 }) {
+        return await this.get({ fields: ['name', 'score'], limit, orderBy: 'score', sort: 'ASC' })
     }
-
 
 }

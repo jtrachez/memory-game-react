@@ -8,7 +8,8 @@ import ModalWin from '../components/modal/ModalWin';
 import { useGameContext } from '../context/GameContext';
 
 import FRUITS from '../data/fruits'
-import { fetcher } from '../lib/utils';
+import { client } from '../database/client';
+import { PlayerRepository } from '../database/PlayerRepository';
 
 export default function Home({ players }) {
   const { cards, founded, activateTimer } = useGameContext()
@@ -34,7 +35,10 @@ export default function Home({ players }) {
 }
 
 export async function getServerSideProps() {
-  const players = await fetcher('/api/players/get-last')
+
+  const repository = new PlayerRepository(client)
+  const players = await repository.getLastByOrderAsc(10)
+
   return {
     props: {
       players
