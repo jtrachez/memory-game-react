@@ -20,7 +20,7 @@ const Card = ({ fruit, id }) => {
                 <CardLogo id={id} fruit={fruit} />
                 <CardFruit fruit={fruit} />
             </ReactFlipCard>
-            {fruit}
+            {/* {fruit} */}
         </div>
     )
 }

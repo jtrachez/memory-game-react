@@ -2,41 +2,40 @@ import Head from 'next/head'
 import { useEffect, useState } from 'react';
 import Card from '../components/card/Card';
 import Debug from '../components/Debug';
-import ModalWin from '../components/dialog/ModalWin';
+import InfoBar from '../components/InfoBar';
+import ModalLose from '../components/modal/ModalLose';
+import ModalWin from '../components/modal/ModalWin';
+import { useGameContext } from '../context/GameContext';
+import { shuffle } from '../lib/utils';
 
-const FRUITS = ["red-apple", "banana", "orange", "lime", "pomegranate",
-  "apricot", "lemon", "strawberry", "green-apple", "peach", "grape",
-  "watermelon", "plum", "pear", "cherry", "raspberry", "mango", "cherry-yellow"]
-
-const FRUITS_LOW = ["red-apple", "banana", "orange"]
-
-
-let shuffleFruits = array => array.sort(() => 0.5 - Math.random());
+import FRUITS from '../data/fruits'
+const TIMING = 5
 
 
 export default function Home() {
-  const [cards, setCards] = useState([])
-  const [counter, setCounter] = useState(10)
-  const [activeCounter, setActiveCounter] = useState(false)
+  const { setCards, cards, founded, resetTimer, updateTimer, timer, timerActive, activateTimer, deactivateTimer, clearOpened, clearFounded, openModalLose } = useGameContext()
 
 
   useEffect(() => {
-    let fruits = [...shuffleFruits(FRUITS_LOW), ...shuffleFruits(FRUITS_LOW)]
-    setCards(fruits)
-  }, [])
+    if (timerActive) {
+      const intervalId = setInterval(() => updateTimer(), 1000)
+      if (timer == 0) {
 
+        deactivateTimer()
+        clearFounded()
+        clearOpened()
+        openModalLose()
 
-  useEffect(() => {
-    if (activeCounter) {
-      const intervalId = setInterval(() => { setCounter(counter - 1) }, 1000)
-      console.log(counter)
-      if (counter == 0) {
-        setActiveCounter(false)
+        // reset timer & shuffle cards again for start new game
+        // setCards([...shuffle(FRUITS), ...shuffle(FRUITS)])
+        setCards()
+        resetTimer()
+
       }
       return () => clearInterval(intervalId)
     }
 
-  }, [counter, activeCounter])
+  }, [timer, timerActive])
 
   return (
     <>
@@ -46,17 +45,15 @@ export default function Home() {
       </Head>
       <div className="container mx-auto">
         {/* <Debug /> */}
-        <div onClick={() => setActiveCounter(true)} className="grid gap-6 grid-cols-6 align-center">
+        <div onClick={() => founded.length < FRUITS.length ? activateTimer() : false} className="grid gap-6 grid-cols-6 align-center">
           {cards && cards.map((fruit, key) => <Card id={key} key={key} fruit={fruit} />)}
         </div>
-        <div className="flex border rounded-md p-5 ">
-          <div className="flex-1">
-            TEMPS RESTANT : {counter}
-          </div>
-          <div className="flex-1">xxx</div>
-        </div>
+
+
+        <InfoBar />
       </div>
       <ModalWin />
+      <ModalLose />
     </>
   )
 }
