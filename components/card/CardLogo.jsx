@@ -1,4 +1,5 @@
 import { useGameContext, addOpenCard } from "../../context/GameContext"
+import Image from 'next/image'
 
 const CardLogo = ({ fruit, id }) => {
     const { addOpenCard, opened } = useGameContext()
@@ -10,7 +11,7 @@ const CardLogo = ({ fruit, id }) => {
     }
 
     return <div onClick={handleClick} >
-        <img src="/oclock-logo.svg" width={100} height={100} />
+        <Image src="/oclock-logo.svg" width={100} height={100} alt="Memory O'Clock" />
     </div>
 }
 

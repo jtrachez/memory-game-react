@@ -13,13 +13,13 @@ const ModalStartGame = ({ players }) => {
                 <Dialog.Overlay className="fixed inset-0 bg-black opacity-60" />
                 <div className="inline-block w-full max-w-md p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white shadow-xl rounded-2xl">
 
-                    <Dialog.Title className="text-2xl font-bold justify-center flex">Memory O'Clock</Dialog.Title>
+                    <Dialog.Title className="text-2xl font-bold justify-center flex">Memory O Clock</Dialog.Title>
                     <Dialog.Description className="mt-2 justify-center flex my-4">
                         Les Meilleurs Scores
                     </Dialog.Description>
 
                     <ul className="flex flex-col items-center justify-center">
-                        {players && players.map((player, id) => <li key={player.name} key={id} className="text-lg"><strong> {id + 1}# {player.name}</strong> <span className="text-sm text-gray-500"> - {player.score} secondes</span></li>)}
+                        {players && players.map((player, id) => <li key={id} className="text-lg"><strong> {id + 1}# {player.name}</strong> <span className="text-sm text-gray-500"> - {player.score} secondes</span></li>)}
                     </ul>
 
                     <div className="mt-5 flex justify-center">

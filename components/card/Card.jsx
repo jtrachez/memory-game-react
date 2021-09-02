@@ -12,7 +12,7 @@ const Card = ({ fruit, id }) => {
     useEffect(() => {
         const card = opened.filter(card => card.fruit == fruit && card.id === id)
         setFlip(card.length > 0 || founded.includes(fruit) ? true : false)
-    })
+    }, [opened, founded, fruit, id])
 
     return (
         <div className="align-self-center justify-self-center m-4">

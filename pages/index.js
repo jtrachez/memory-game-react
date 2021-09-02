@@ -12,7 +12,6 @@ import { fetcher } from '../lib/utils';
 
 export default function Home({ players }) {
   const { cards, founded, activateTimer } = useGameContext()
-
   return (
     <>
       <Head>
