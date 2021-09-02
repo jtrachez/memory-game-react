@@ -1,18 +1,28 @@
 import { createContext, useContext, useEffect, useReducer, useState } from "react";
 import FRUITS from "../data/fruits";
 const shuffle = array => array.sort(() => 0.5 - Math.random());
-
+import config from '../config/config'
 const GameContext = createContext();
+
 
 const initialState = {
     cards: [],
     displayModalWin: false,
     displayModalLose: false,
+    displayModalStart: true,
     timerActive: false,
-    timer: 5,
+    timer: config.TIMING,
     opened: [],
-    founded: []
+    founded: [],
+    playTime: 0,
+    players: [
+        { name: "Julo", score: 3 },
+        { name: "Sophie", score: 5 },
+        { name: "Paddy", score: 20 },
+        { name: "Eden", score: 10 },
+    ]
 }
+
 
 
 const ADD_OPEN_CARD = 'ADD_OPEN_CARD'
@@ -23,15 +33,23 @@ const OPEN_MODAL_WIN = 'OPEN_MODAL_WIN'
 const CLOSE_MODAL_WIN = 'CLOSE_MODAL_WIN'
 const OPEN_MODAL_LOSE = 'OPEN_MODAL_LOSE'
 const CLOSE_MODAL_LOSE = 'CLOSE_MODAL_LOSE'
+const OPEN_MODAL_START = 'OPEN_MODAL_START'
+const CLOSE_MODAL_START = 'CLOSE_MODAL_START'
 const ACTIVATE_TIMER = 'ACTIVATE_TIMER'
 const DEACTIVATE_TIMER = 'DEACTIVATE_TIMER'
 const UPDATE_TIMER = 'UPDATE_TIMER'
 const RESET_TIMER = 'RESET_TIMER'
 const SET_CARDS = 'SET_CARDS'
+const SET_PLAYTIME = 'SET_PLAYTIME'
 
 
 const gameReducer = (state, action) => {
     switch (action.type) {
+        case SET_PLAYERS:
+            return {
+                ...state,
+                players: action.payload
+            }
         case SET_CARDS:
             return {
                 ...state,
@@ -46,6 +64,16 @@ const gameReducer = (state, action) => {
             return {
                 ...state,
                 displayModalWin: false
+            }
+        case OPEN_MODAL_START:
+            return {
+                ...state,
+                displayModalStart: true
+            }
+        case CLOSE_MODAL_START:
+            return {
+                ...state,
+                displayModalStart: false
             }
         case OPEN_MODAL_LOSE:
             return {
@@ -97,6 +125,11 @@ const gameReducer = (state, action) => {
                 ...state,
                 timer: initialState.timer
             }
+        case SET_PLAYTIME:
+            return {
+                ...state,
+                playTime: action.payload
+            }
         default:
             return state;
     }
@@ -105,6 +138,9 @@ const gameReducer = (state, action) => {
 const GameProvider = (props) => {
 
     const [state, dispatch] = useReducer(gameReducer, initialState)
+
+
+    const setPlayers = (payload) => dispatch({ type: SET_PLAYERS, payload })
 
     const addOpenCard = (payload) => {
         return dispatch({ type: ADD_OPEN_CARD, payload })
@@ -132,15 +168,30 @@ const GameProvider = (props) => {
         return dispatch({ type: CLEAR_OPEN_CARDS })
     }
 
+    const updateTimer = () => dispatch({ type: UPDATE_TIMER })
+    const resetTimer = () => dispatch({ type: RESET_TIMER })
+
+    const setCards = () => dispatch({ type: SET_CARDS })
+    const setPlayTime = (payload) => dispatch({ type: SET_PLAYTIME, payload })
+
+
+    // @todo gestion des vues pour les modals (ex: setViewModal(WIN))
+    const openModalWin = () => dispatch({ type: OPEN_MODAL_WIN })
     const closeModalWin = () => dispatch({ type: CLOSE_MODAL_WIN })
 
     const openModalLose = () => dispatch({ type: OPEN_MODAL_LOSE })
     const closeModalLose = () => dispatch({ type: CLOSE_MODAL_LOSE })
 
-    const updateTimer = () => dispatch({ type: UPDATE_TIMER })
-    const resetTimer = () => dispatch({ type: RESET_TIMER })
+    const openModalStart = () => dispatch({ type: OPEN_MODAL_START })
+    const closeModalStart = () => dispatch({ type: CLOSE_MODAL_START })
 
-    const setCards = () => dispatch({ type: SET_CARDS })
+
+    const resetGame = () => {
+        clearOpened()
+        clearFounded()
+        setCards()
+        resetTimer()
+    }
 
 
     const checkDoubleCardClicked = () => {
@@ -157,7 +208,7 @@ const GameProvider = (props) => {
             } else {
                 setTimeout(() => {
                     dispatch({ type: CLEAR_OPEN_CARDS })
-                }, 1000)
+                }, 500)
             }
 
         }
@@ -167,23 +218,49 @@ const GameProvider = (props) => {
         if (state.founded.length == FRUITS.length) {
             console.log('win game complete')
             deactivateTimer()
-            setTimeout(() => dispatch({ type: OPEN_MODAL_WIN }), 500)
+            console.log(state.timer)
+            setPlayTime(state.timer)
+            setTimeout(() => {
+                openModalWin()
+                resetGame()
+            }, 500)
         }
     }
 
+
+    // Effect for start timer countdown
     useEffect(() => {
+        if (state.timerActive) {
+            const intervalId = setInterval(() => updateTimer(), 1000)
+            if (state.timer == 0) {
+
+                deactivateTimer()
+                openModalLose()
+                resetGame()
+            }
+            return () => clearInterval(intervalId)
+        }
+
+    }, [state.timer, state.timerActive])
+
+
+    // effect on first rendered only
+    useEffect(async () => {
         setCards()
     }, [])
 
+    // Effect for check DoubleClikedCard
     useEffect(() => {
         checkDoubleCardClicked()
     })
 
+    // Effect for check if win game
     useEffect(() => {
         checkWinGame()
     }, [state.founded])
 
 
+    // @todo utiliser useMemo pour optimiser ?
     const value = {
         ...state,
         addOpenCard,
@@ -196,7 +273,10 @@ const GameProvider = (props) => {
         closeModalLose,
         updateTimer,
         resetTimer,
-        setCards
+        setCards,
+        resetGame,
+        openModalStart,
+        closeModalStart
     }
 
 

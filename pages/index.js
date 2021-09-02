@@ -1,41 +1,16 @@
 import Head from 'next/head'
-import { useEffect, useState } from 'react';
 import Card from '../components/card/Card';
 import Debug from '../components/Debug';
 import InfoBar from '../components/InfoBar';
 import ModalLose from '../components/modal/ModalLose';
+import ModalStartGame from '../components/modal/ModalStartGame';
 import ModalWin from '../components/modal/ModalWin';
 import { useGameContext } from '../context/GameContext';
-import { shuffle } from '../lib/utils';
 
 import FRUITS from '../data/fruits'
-const TIMING = 5
 
-
-export default function Home() {
-  const { setCards, cards, founded, resetTimer, updateTimer, timer, timerActive, activateTimer, deactivateTimer, clearOpened, clearFounded, openModalLose } = useGameContext()
-
-
-  useEffect(() => {
-    if (timerActive) {
-      const intervalId = setInterval(() => updateTimer(), 1000)
-      if (timer == 0) {
-
-        deactivateTimer()
-        clearFounded()
-        clearOpened()
-        openModalLose()
-
-        // reset timer & shuffle cards again for start new game
-        // setCards([...shuffle(FRUITS), ...shuffle(FRUITS)])
-        setCards()
-        resetTimer()
-
-      }
-      return () => clearInterval(intervalId)
-    }
-
-  }, [timer, timerActive])
+export default function Home({ players }) {
+  const { cards, founded, activateTimer } = useGameContext()
 
   return (
     <>
@@ -49,11 +24,12 @@ export default function Home() {
           {cards && cards.map((fruit, key) => <Card id={key} key={key} fruit={fruit} />)}
         </div>
 
-
         <InfoBar />
       </div>
+      <ModalStartGame />
       <ModalWin />
       <ModalLose />
     </>
   )
 }
+

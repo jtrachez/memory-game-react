@@ -1,0 +1,7 @@
+CREATE TABLE `players` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `players` VARCHAR(45) NULL,
+  `score` TINYINT(5) NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf32_unicode_ci;

@@ -1,10 +1,12 @@
 import { useGameContext, addOpenCard } from "../../context/GameContext"
 
 const CardLogo = ({ fruit, id }) => {
-    const { addOpenCard } = useGameContext()
+    const { addOpenCard, opened } = useGameContext()
 
     const handleClick = () => {
-        addOpenCard({ id, fruit })
+
+        return (opened.length < 2) ? addOpenCard({ id, fruit }) : false
+
     }
 
     return <div onClick={handleClick} >
