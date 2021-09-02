@@ -8,6 +8,7 @@ import ModalWin from '../components/modal/ModalWin';
 import { useGameContext } from '../context/GameContext';
 
 import FRUITS from '../data/fruits'
+import { fetcher } from '../lib/utils';
 
 export default function Home({ players }) {
   const { cards, founded, activateTimer } = useGameContext()
@@ -26,10 +27,18 @@ export default function Home({ players }) {
 
         <InfoBar />
       </div>
-      <ModalStartGame />
+      <ModalStartGame players={players} />
       <ModalWin />
       <ModalLose />
     </>
   )
 }
 
+export async function getServerSideProps() {
+  const players = await fetcher('/api/players/get-last')
+  return {
+    props: {
+      players
+    },
+  }
+}
