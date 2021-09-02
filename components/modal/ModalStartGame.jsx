@@ -3,9 +3,9 @@ import { useGameContext } from "../../context/GameContext"
 
 
 
-const ModalStartGame = () => {
+const ModalStartGame = ({ players }) => {
 
-    const { displayModalStart, closeModalStart, players } = useGameContext()
+    const { displayModalStart, closeModalStart } = useGameContext()
 
     return (
         <Dialog className="fixed z-10 inset-0 overflow-y-auto" open={displayModalStart} onClose={() => false}>
@@ -15,16 +15,15 @@ const ModalStartGame = () => {
 
                     <Dialog.Title className="text-2xl font-bold justify-center flex">Memory O'Clock</Dialog.Title>
                     <Dialog.Description className="mt-2 justify-center flex my-4">
-                        Les Meilleures Scores
+                        Les Meilleurs Scores
                     </Dialog.Description>
 
                     <ul className="flex flex-col items-center justify-center">
-                        {players.map((player, id) => <li key={player.name} className="text-lg"><strong> {id + 1}# {player.name}</strong> <span className="text-sm text-gray-500">{player.score} secondes</span></li>)}
+                        {players && players.map((player, id) => <li key={player.name} key={id} className="text-lg"><strong> {id + 1}# {player.name}</strong> <span className="text-sm text-gray-500"> - {player.score} secondes</span></li>)}
                     </ul>
 
                     <div className="mt-5 flex justify-center">
                         <button className="p-4 bg-yellow-300 font-bold rounded-md text-xl uppercase" onClick={() => closeModalStart()}>Commencer</button>
-                        {/* <button className="p-2 bg-yellow-300 font-bold rounded-md" onClick={() => closeModalStart()}>Close</button> */}
                     </div>
                 </div>
             </div>
