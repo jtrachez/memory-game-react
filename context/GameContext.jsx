@@ -1,9 +1,8 @@
-import { createContext, useContext, useEffect, useReducer, useState } from "react";
+import { createContext, useContext, useEffect, useReducer } from "react";
 import FRUITS from "../data/fruits";
-const shuffle = array => array.sort(() => 0.5 - Math.random());
 import config from '../config/config'
+import { shuffle } from "../lib/utils";
 const GameContext = createContext();
-
 
 const initialState = {
     cards: [],
@@ -15,12 +14,6 @@ const initialState = {
     opened: [],
     founded: [],
     playTime: 0,
-    players: [
-        { name: "Julo", score: 3 },
-        { name: "Sophie", score: 5 },
-        { name: "Paddy", score: 20 },
-        { name: "Eden", score: 10 },
-    ]
 }
 
 
@@ -45,11 +38,6 @@ const SET_PLAYTIME = 'SET_PLAYTIME'
 
 const gameReducer = (state, action) => {
     switch (action.type) {
-        case SET_PLAYERS:
-            return {
-                ...state,
-                players: action.payload
-            }
         case SET_CARDS:
             return {
                 ...state,
@@ -139,9 +127,6 @@ const GameProvider = (props) => {
 
     const [state, dispatch] = useReducer(gameReducer, initialState)
 
-
-    const setPlayers = (payload) => dispatch({ type: SET_PLAYERS, payload })
-
     const addOpenCard = (payload) => {
         return dispatch({ type: ADD_OPEN_CARD, payload })
     }
@@ -158,11 +143,9 @@ const GameProvider = (props) => {
         dispatch({ type: DEACTIVATE_TIMER })
     }
 
-
     const clearFounded = () => {
         return dispatch({ type: CLEAR_FOUND_FRUIT })
     }
-
 
     const clearOpened = () => {
         return dispatch({ type: CLEAR_OPEN_CARDS })
@@ -175,7 +158,7 @@ const GameProvider = (props) => {
     const setPlayTime = (payload) => dispatch({ type: SET_PLAYTIME, payload })
 
 
-    // @todo gestion des vues pour les modals (ex: setViewModal(WIN))
+    // @todo gestion des vues pour les modals et/ou separer le context des modals (ex: setViewModal(WIN))
     const openModalWin = () => dispatch({ type: OPEN_MODAL_WIN })
     const closeModalWin = () => dispatch({ type: CLOSE_MODAL_WIN })
 
