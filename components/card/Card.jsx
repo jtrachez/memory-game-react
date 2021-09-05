@@ -15,7 +15,7 @@ const Card = ({ fruit, id }) => {
     }, [opened, founded, fruit, id])
 
     return (
-        <div className="align-self-center justify-self-center">
+        <div style={{ width: '100px', height: '100px' }} className="align-self-center justify-self-center">
             <ReactFlipCard isFlipped={flip} >
                 <CardLogo id={id} fruit={fruit} />
                 <CardFruit fruit={fruit} />
